@@ -5,6 +5,9 @@ import shutil
 
 DIRECTORY = Path.home() / "Downloads"
 
+#This is the test directory (only for development stage)
+DIRECTORY = Path("C:/Users/mayke/OneDrive/Desktop")
+
 SUBFOLDERS = {
     "Photos": [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".tiff", ".tif", ".bmp", ".heic", ".raw"],
     "Videos": [".mp4", ".mov", ".mkv", ".avi", ".webm", ".flv", ".wmv", ".3gp", ".m4v"],
@@ -12,33 +15,45 @@ SUBFOLDERS = {
     "Audio": [".mp3", ".wav", ".aac", ".m4a", ".ogg", ".flac", ".alac", ".aiff"]
 }
 
+
+#Defining the <pick_directory()> funciton
+def pick_directory() -> Path:
+    print(
+        'Default directory is Downloads.\n'
+        'To change it, paste the full path, or press Enter to use Downloads.'
+    )
+    user_input = input("> ").strip()
+
+    if user_input:
+        return Path(user_input)
+    global DIRECTORY
+    return DIRECTORY
+
+
 #Defining the <organize()> funciton
+def organize() -> None:
 
-def organize():
-
-    #First we check wich folder the user wants to use the script on
-    print("""The default directory is set to Downloads. If you want to change it it please provide the full directory, or press "Enter" to use the Downloads folder""")
-    NEW_DIRECTORY = Path(input(""))
-    if NEW_DIRECTORY:
-        DIRECTORY = NEW_DIRECTORY
-
+    #Picking up the directory to organize
+    directory = pick_directory()
 
     #Now we make sure the directory exists so we can work with it and it doesnt raise an error in the Path Library and then we loop.
-    if DIRECTORY.exists() and DIRECTORY.is_dir():
-        for item in DIRECTORY.iterdir():
+    if directory.exists() and directory.is_dir():
+        for item in directory.iterdir():
             if item.is_file():
                 for folder, extensions in SUBFOLDERS.items():
                     if item.suffix.lower() in extensions:
-                        destination = DIRECTORY / folder
+                        destination = directory / folder
                         destination.mkdir(exist_ok=True)
                         shutil.move(str(item), str(destination / item.name))
+                        print(f"{item.name} has been moved to {folder}")
                         
                     else:
-                        other = DIRECTORY / "Other"
+                        other = directory / "Other"
                         other.mkdir(exist_ok=True)
                         shutil.move(str(item), str(other / item.name))
-                    print(f"{item.name} has been moved to {folder}")
+                        print(f"{item.name} has been moved to Other")
                     break
+                    
     else:
         print("Directory does not exist or is not a directory")
 
