@@ -6,7 +6,7 @@ import shutil
 DIRECTORY = Path.home() / "Downloads"
 
 #This is the test directory (only for development stage)
-DIRECTORY = Path("C:/Users/mayke/OneDrive/Desktop")
+DIRECTORY = Path(r"C:\Users\mayke\OneDrive\Documents\Testing Directory")
 
 SUBFOLDERS = {
     "Photos": [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".tiff", ".tif", ".bmp", ".heic", ".raw"],
@@ -38,21 +38,24 @@ def organize() -> None:
 
     #Now we make sure the directory exists so we can work with it and it doesnt raise an error in the Path Library and then we loop.
     if directory.exists() and directory.is_dir():
-        for item in directory.iterdir():
+        items = directory.iterdir()
+        count = 1
+        for item in items:
             if item.is_file():
                 for folder, extensions in SUBFOLDERS.items():
+                    print(f"Current folder is{folder} and current extensions are {extensions}")
                     if item.suffix.lower() in extensions:
+                        print(f"Item suffix is{item.suffix.lower()} and is in {extensions}")
                         destination = directory / folder
                         destination.mkdir(exist_ok=True)
-                        shutil.move(str(item), str(destination / item.name))
-                        print(f"{item.name} has been moved to {folder}")
-                        
-                    else:
-                        other = directory / "Other"
-                        other.mkdir(exist_ok=True)
-                        shutil.move(str(item), str(other / item.name))
-                        print(f"{item.name} has been moved to Other")
-                    break
+                        try:
+                            shutil.move(str(item), str(destination / item.name))
+                            print(f"{item.name} has been moved to {folder}")
+                        except FileNotFoundError:
+                            print(f"The file {item.name} was not found in {folder}")
+                
+                    count = count + 1
+                    print(f"This is iteration number {str(count)}")
                     
     else:
         print("Directory does not exist or is not a directory")
