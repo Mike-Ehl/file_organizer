@@ -2,11 +2,7 @@ from pathlib import Path
 import shutil
 
 #Defining the default directory and subfolders
-
 DIRECTORY = Path.home() / "Downloads"
-
-#This is the test directory (only for development stage)
-DIRECTORY = Path(r"C:\Users\mayke\OneDrive\Documents\Testing Directory")
 
 SUBFOLDERS = {
     "Photos": [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".tiff", ".tif", ".bmp", ".heic", ".raw"],
@@ -42,9 +38,7 @@ def organize() -> None:
         for item in items:
             if item.is_file():
                 for folder, extensions in SUBFOLDERS.items():
-                    print(f"Current folder is{folder} and current extensions are {extensions}")
                     if item.suffix.lower() in extensions:
-                        print(f"Item suffix is{item.suffix.lower()} and is in {extensions}")
                         destination = directory / folder
                         destination.mkdir(exist_ok=True)
                         try:
