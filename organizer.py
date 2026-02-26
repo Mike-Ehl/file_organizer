@@ -39,7 +39,6 @@ def organize() -> None:
     #Now we make sure the directory exists so we can work with it and it doesnt raise an error in the Path Library and then we loop.
     if directory.exists() and directory.is_dir():
         items = directory.iterdir()
-        count = 1
         for item in items:
             if item.is_file():
                 for folder, extensions in SUBFOLDERS.items():
@@ -52,10 +51,21 @@ def organize() -> None:
                             shutil.move(str(item), str(destination / item.name))
                             print(f"{item.name} has been moved to {folder}")
                         except FileNotFoundError:
-                            print(f"The file {item.name} was not found in {folder}")
-                
-                    count = count + 1
-                    print(f"This is iteration number {str(count)}")
+                            print(f"The file {item.name} was not found in {directory}")
+
+
+        #Now we iterate to retreive the files that are not included in our dictionary and send them to "Other"
+        items = directory.iterdir() #Updating the variable to hold the rest of the files
+        for item in items:
+            if item.is_file():
+                destination = directory / "Other"
+                destination.mkdir(exist_ok=True)
+                try:
+                    shutil.move(str(item), str(destination / item.name))
+                    print(f"{item.name} has been moved to Other")
+                except FileNotFoundError:
+                    print(f"The file {item.name} was not found in {directory}")        
+
                     
     else:
         print("Directory does not exist or is not a directory")
